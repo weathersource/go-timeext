@@ -1,2 +1,2 @@
-// Package timeext provides functions that extend the golang time library.
+// Package timeext provides functions that supplement the golang time library.
 package timeext

@@ -6,4 +6,4 @@ pkg/timeext
 [![Build Status](https://travis-ci.org/weathersource/go-timeext.svg)](https://travis-ci.org/weathersource/go-timeext)
 [![Codevov](https://codecov.io/gh/weathersource/go-timeext/branch/master/graphs/badge.svg)](https://codecov.io/gh/weathersource/go-timeext)
 
-Package timeext provides functions that extend the golang time library.
+Package timeext provides functions that supplement the golang time library.
