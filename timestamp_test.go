@@ -3,22 +3,25 @@ package timeext
 import (
 	"fmt"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func TestTimestamp(t *testing.T) {
 	tests := []struct {
-		ts string
+		ts  string
+		out string
 	}{
-		{"1950-01-01T00:00:00Z"},
-		{"1969-12-31T00:00:00+01:00"},
-		{"1970-01-01T00:00:00-01:00"},
-		{"2019-01-01T00:00:00.1Z"},
+		{"1950-01-01T00:00:00Z", "1950-01-01T00:00:00Z"},
+		{"1969-12-31T00:00:00-01:00", "1969-12-31T01:00:00Z"},
+		{"1970-01-01T00:00:00+01:00", "1969-12-31T23:00:00Z"},
+		{"2019-01-01T00:00:00.1Z", "2019-01-01T00:00:00Z"},
 	}
 	for _, test := range tests {
-		_, err := Timestamp(test.ts)
+		out, err := Timestamp(test.ts)
 		assert.Nil(t, err)
+		assert.Equal(t, test.out, out.Format(timestampFormat))
 	}
 }
 
@@ -116,5 +119,27 @@ func TestHourCountError(t *testing.T) {
 		if !assert.NotNil(t, err) {
 			fmt.Println(count)
 		}
+	}
+}
+
+func TestToTimestamp(t *testing.T) {
+	loc, _ := time.LoadLocation("America/Los_Angeles")
+
+	tests := []struct {
+		in  time.Time
+		out string
+	}{
+		{
+			time.Unix(1546560000, 0),
+			"2019-01-04T00:00:00Z",
+		},
+		{
+			time.Date(2010, 12, 31, 0, 0, 0, 0, loc),
+			"2010-12-31T08:00:00Z",
+		},
+	}
+	for _, test := range tests {
+		out := ToTimestamp(test.in)
+		assert.Equal(t, test.out, out)
 	}
 }

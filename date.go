@@ -13,7 +13,7 @@ const dateFormat = "2006-01-02"
 
 // Date validates t is formatted YYYY-MM-DD and returns time object.
 func Date(d string) (date time.Time, err error) {
-	date, err = time.Parse(dateFormat, d)
+	date, err = time.ParseInLocation(dateFormat, d, time.UTC)
 	if err != nil {
 		err = errors.NewInvalidArgumentError("Date must be formatted \"YYYY-MM-DD\": "+d, err)
 		return
@@ -40,4 +40,9 @@ func DayCount(dateStart string, dateEnd string) (int, error) {
 	}
 
 	return int(math.Floor(tEnd.Sub(tStart).Hours()/24 + 1)), nil
+}
+
+// ToDate converts a time object to a date string
+func ToDate(date time.Time) string {
+	return date.UTC().Format(dateFormat)
 }

@@ -3,22 +3,25 @@ package timeext
 import (
 	"fmt"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func TestDate(t *testing.T) {
 	tests := []struct {
-		d string
+		in  string
+		out string
 	}{
-		{"1950-01-01"},
-		{"1969-12-31"},
-		{"1970-01-01"},
-		{"2019-01-01"},
+		{"1950-01-01", "1950-01-01"},
+		{"1969-12-31", "1969-12-31"},
+		{"1970-01-01", "1970-01-01"},
+		{"2019-01-01", "2019-01-01"},
 	}
 	for _, test := range tests {
-		_, err := Date(test.d)
+		out, err := Date(test.in)
 		assert.Nil(t, err)
+		assert.Equal(t, test.out, out.Format(dateFormat))
 	}
 }
 
@@ -67,5 +70,25 @@ func TestDayCountError(t *testing.T) {
 		if !assert.NotNil(t, err) {
 			fmt.Println(count)
 		}
+	}
+}
+
+func TestToDate(t *testing.T) {
+	tests := []struct {
+		in  time.Time
+		out string
+	}{
+		{
+			time.Unix(1546560000, 0),
+			"2019-01-04",
+		},
+		{
+			time.Date(2010, 12, 31, 0, 0, 0, 0, time.Local),
+			"2010-12-31",
+		},
+	}
+	for _, test := range tests {
+		out := ToDate(test.in)
+		assert.Equal(t, test.out, out)
 	}
 }

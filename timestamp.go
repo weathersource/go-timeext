@@ -14,6 +14,7 @@ const timestampFormat = time.RFC3339
 // Timestamp validates t is formatted RFC 3339 and returns time object.
 func Timestamp(t string) (timestamp time.Time, err error) {
 	timestamp, err = time.Parse(timestampFormat, t)
+	timestamp = timestamp.UTC()
 	if err != nil {
 		err = errors.NewInvalidArgumentError("Timestamp must be formatted RFC 3339: "+t, err)
 		return
@@ -25,13 +26,12 @@ func Timestamp(t string) (timestamp time.Time, err error) {
 // rounded to the top of the UTC hour
 func TimestampRounded(t string) (time.Time, error) {
 
-	timestamp, err := Timestamp(t)
+	ts, err := Timestamp(t)
 	if err != nil {
 		return time.Time{}, err
 	}
 
-	utc := timestamp.UTC()
-	rounded := time.Date(utc.Year(), utc.Month(), utc.Day(), utc.Hour(), 0, 0, 0, utc.Location())
+	rounded := time.Date(ts.Year(), ts.Month(), ts.Day(), ts.Hour(), 0, 0, 0, time.UTC)
 	return rounded, nil
 }
 
@@ -67,4 +67,9 @@ func HourCount(timestampStart string, timestampEnd string) (int, error) {
 	}
 
 	return int(math.Floor(tEnd.Sub(tStart).Hours() + 1)), nil
+}
+
+// ToTimestamp converts a time object to a RFC 9993 timestamp string
+func ToTimestamp(timestamp time.Time) string {
+	return timestamp.UTC().Format(timestampFormat)
 }
