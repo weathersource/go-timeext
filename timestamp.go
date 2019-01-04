@@ -14,11 +14,11 @@ const timestampFormat = time.RFC3339
 // Timestamp validates t is formatted RFC 3339 and returns time object.
 func Timestamp(t string) (timestamp time.Time, err error) {
 	timestamp, err = time.Parse(timestampFormat, t)
-	timestamp = timestamp.UTC()
 	if err != nil {
 		err = errors.NewInvalidArgumentError("Timestamp must be formatted RFC 3339: "+t, err)
 		return
 	}
+	timestamp = timestamp.UTC()
 	return
 }
 
