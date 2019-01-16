@@ -1,5 +1,5 @@
-pkg/timeext
-===========
+go-timeext
+==========
 
 [![GoDoc](https://godoc.org/github.com/weathersource/go-timeext?status.svg)](https://godoc.org/github.com/weathersource/go-timeext)
 [![Go Report Card](https://goreportcard.com/badge/github.com/weathersource/go-timeext)](https://goreportcard.com/report/github.com/weathersource/go-timeext)
