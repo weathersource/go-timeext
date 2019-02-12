@@ -4,6 +4,7 @@ package timeext
 
 import (
 	"math"
+	"strconv"
 	"time"
 
 	errors "github.com/weathersource/go-errors"
@@ -36,7 +37,7 @@ func DayCount(dateStart string, dateEnd string) (int, error) {
 	}
 
 	if tEnd.Before(tStart) {
-		return 0, errors.NewInvalidArgumentError("Start Date ("+dateStart+") must not be after End Date ("+dateEnd+")", err)
+		return 0, errors.NewInvalidArgumentError("Start Date (" + dateStart + ") must not be after End Date (" + dateEnd + ")")
 	}
 
 	return int(math.Floor(tEnd.Sub(tStart).Hours()/24 + 1)), nil
@@ -45,4 +46,19 @@ func DayCount(dateStart string, dateEnd string) (int, error) {
 // ToDate converts a time object to a date string
 func ToDate(date time.Time) string {
 	return date.UTC().Format(dateFormat)
+}
+
+// DateYear extracts the year from a date string
+func DateYear(date string) (int, error) {
+
+	if len(date) < 4 {
+		return 0, errors.NewInvalidArgumentError("Invalid date value: " + date)
+	}
+
+	year, err := strconv.ParseInt(date[:4], 10, 64)
+	if err != nil {
+		return 0, err
+	}
+
+	return int(year), nil
 }

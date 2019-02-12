@@ -4,6 +4,7 @@ package timeext
 
 import (
 	"math"
+	"strconv"
 	"time"
 
 	errors "github.com/weathersource/go-errors"
@@ -62,8 +63,8 @@ func HourCount(timestampStart string, timestampEnd string) (int, error) {
 	}
 
 	if tEnd.Before(tStart) {
-		return 0, errors.NewInvalidArgumentError("Start Timestamp ("+
-			timestampStart+") must not be after End Timestamp ("+timestampEnd+")", err)
+		return 0, errors.NewInvalidArgumentError("Start Timestamp (" +
+			timestampStart + ") must not be after End Timestamp (" + timestampEnd + ")")
 	}
 
 	return int(math.Floor(tEnd.Sub(tStart).Hours() + 1)), nil
@@ -72,4 +73,19 @@ func HourCount(timestampStart string, timestampEnd string) (int, error) {
 // ToTimestamp converts a time object to a RFC 9993 timestamp string
 func ToTimestamp(timestamp time.Time) string {
 	return timestamp.UTC().Format(timestampFormat)
+}
+
+// TimestampYear extracts the year from a timestamp string
+func TimestampYear(ts string) (int, error) {
+
+	if len(ts) < 4 {
+		return 0, errors.NewInvalidArgumentError("Invalid timestamp value: " + ts)
+	}
+
+	year, err := strconv.ParseInt(ts[:4], 10, 64)
+	if err != nil {
+		return 0, err
+	}
+
+	return int(year), nil
 }

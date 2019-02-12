@@ -1,7 +1,6 @@
 package timeext
 
 import (
-	"fmt"
 	"testing"
 	"time"
 
@@ -115,10 +114,8 @@ func TestHourCountError(t *testing.T) {
 		{"2019-01-01T02:00:00Z", "2019-01-01T00:00:00.1Z"},
 	}
 	for _, test := range tests {
-		count, err := HourCount(test.ts1, test.ts2)
-		if !assert.NotNil(t, err) {
-			fmt.Println(count)
-		}
+		_, err := HourCount(test.ts1, test.ts2)
+		assert.NotNil(t, err)
 	}
 }
 
@@ -141,5 +138,41 @@ func TestToTimestamp(t *testing.T) {
 	for _, test := range tests {
 		out := ToTimestamp(test.in)
 		assert.Equal(t, test.out, out)
+	}
+}
+
+func TestTimestampYear(t *testing.T) {
+	tests := []struct {
+		in  string
+		out int
+	}{
+		{
+			"2019-01-04T12:34:56Z",
+			2019,
+		},
+		{
+			"2010-12-31T12:34:56Z",
+			2010,
+		},
+	}
+	for _, test := range tests {
+		out, err := TimestampYear(test.in)
+		assert.Nil(t, err)
+		assert.Equal(t, test.out, out)
+	}
+
+	testerrors := []struct {
+		in string
+	}{
+		{
+			"201",
+		},
+		{
+			"201-01-04",
+		},
+	}
+	for _, test := range testerrors {
+		_, err := TimestampYear(test.in)
+		assert.NotNil(t, err)
 	}
 }
