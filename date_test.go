@@ -89,39 +89,3 @@ func TestToDate(t *testing.T) {
 		assert.Equal(t, test.out, out)
 	}
 }
-
-func TestDateYear(t *testing.T) {
-	tests := []struct {
-		in  string
-		out int
-	}{
-		{
-			"2019-01-04",
-			2019,
-		},
-		{
-			"2010-12-31",
-			2010,
-		},
-	}
-	for _, test := range tests {
-		out, err := DateYear(test.in)
-		assert.Nil(t, err)
-		assert.Equal(t, test.out, out)
-	}
-
-	testerrors := []struct {
-		in string
-	}{
-		{
-			"201",
-		},
-		{
-			"201-01-04",
-		},
-	}
-	for _, test := range testerrors {
-		_, err := DateYear(test.in)
-		assert.NotNil(t, err)
-	}
-}

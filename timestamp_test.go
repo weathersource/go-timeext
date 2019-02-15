@@ -140,39 +140,3 @@ func TestToTimestamp(t *testing.T) {
 		assert.Equal(t, test.out, out)
 	}
 }
-
-func TestTimestampYear(t *testing.T) {
-	tests := []struct {
-		in  string
-		out int
-	}{
-		{
-			"2019-01-04T12:34:56Z",
-			2019,
-		},
-		{
-			"2010-12-31T12:34:56Z",
-			2010,
-		},
-	}
-	for _, test := range tests {
-		out, err := TimestampYear(test.in)
-		assert.Nil(t, err)
-		assert.Equal(t, test.out, out)
-	}
-
-	testerrors := []struct {
-		in string
-	}{
-		{
-			"201",
-		},
-		{
-			"201-01-04",
-		},
-	}
-	for _, test := range testerrors {
-		_, err := TimestampYear(test.in)
-		assert.NotNil(t, err)
-	}
-}
