@@ -30,6 +30,7 @@ func TestDateError(t *testing.T) {
 	}{
 		{"20190-01"},
 		{"2019-1-1"},
+		{"2019-01"},
 		{"2019-01-0"},
 		{"2019-01-32"},
 		{"2019-01-32A"},
@@ -87,5 +88,54 @@ func TestToDate(t *testing.T) {
 	for _, test := range tests {
 		out := ToDate(test.in)
 		assert.Equal(t, test.out, out)
+	}
+}
+
+func TestFirstTimeInDay(t *testing.T) {
+
+	// prepare Havana location for test
+	havana, _ := time.LoadLocation("America/Havana")
+
+	tests := []struct {
+		in  string
+		loc *time.Location
+		out time.Time
+	}{
+		{
+			// normal time and location
+			"2019-03-10",
+			time.UTC,
+			time.Date(2019, time.March, 10, 0, 0, 0, 0, time.UTC),
+		},
+		{
+			// DST time and location without midnight
+			"2019-03-10",
+			havana,
+			time.Date(2019, time.March, 10, 1, 0, 0, 0, havana),
+		},
+	}
+	for _, test := range tests {
+		out, err := FirstTimeInDay(test.in, test.loc)
+		assert.Nil(t, err)
+		assert.Equal(t, test.out, out)
+	}
+}
+
+func TestFirstTimeInDayError(t *testing.T) {
+
+	tests := []struct {
+		d string
+	}{
+		{"20190-01"},
+		{"2019-1-1"},
+		{"2019-01"},
+		{"2019-01-0"},
+		{"2019-01-32"},
+		{"2019-01-32A"},
+		{""},
+	}
+	for _, test := range tests {
+		_, err := FirstTimeInDay(test.d, time.UTC)
+		assert.NotNil(t, err)
 	}
 }
