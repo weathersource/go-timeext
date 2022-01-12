@@ -89,6 +89,63 @@ func TestTimestampRoundedStringError(t *testing.T) {
 	}
 }
 
+func TestTimestampRoundedQuarterHour(t *testing.T) {
+	tests := []struct {
+		ts string
+		out string
+	}{
+		{"2019-01-01T00:33:01Z", "2019-01-01T00:30:00Z"},
+		{"2019-01-01T00:58:13Z", "2019-01-01T01:00:00Z"},
+		{"2019-01-01T00:11:59Z", "2019-01-01T00:15:00Z"},
+		{"2019-01-01T00:29:50Z", "2019-01-01T00:30:00Z"},
+		{"2019-01-01T23:52:30Z", "2019-01-02T00:00:00Z"},
+		{"2019-01-01T23:52:29Z", "2019-01-01T23:45:00Z"},
+	}
+	for _, test := range tests {
+		out, err := TimestampRoundedQuarterHour(test.ts)
+		assert.Nil(t, err)
+		assert.Equal(t, test.out, out.Format(timestampFormat))
+	}
+}
+
+func TestTimestampRoundedQuarterHourError(t *testing.T) {
+	tests := []struct {
+		ts string
+	}{
+		{"2019-01-01T00:30:00A"},
+	}
+	for _, test := range tests {
+		_, err := TimestampRoundedQuarterHour(test.ts)
+		assert.NotNil(t, err)
+	}
+}
+
+func TestTimestampRoundedQuarterHourString(t *testing.T) {
+	tests := []struct {
+		ts string
+		out string
+	}{
+		{"2019-01-01T00:33:00Z", "2019-01-01T00:30:00Z"},
+	}
+	for _, test := range tests {
+		out, err := TimestampRoundedQuarterHourString(test.ts)
+		assert.Nil(t, err)
+		assert.Equal(t, test.out, out)
+	}
+}
+
+func TestTimestampRoundedQuarterHourStringError(t *testing.T) {
+	tests := []struct {
+		ts string
+	}{
+		{"2019-01-01T00:30:00A"},
+	}
+	for _, test := range tests {
+		_, err := TimestampRoundedQuarterHourString(test.ts)
+		assert.NotNil(t, err)
+	}
+}
+
 func TestHourCount(t *testing.T) {
 	tests := []struct {
 		ts1, ts2 string

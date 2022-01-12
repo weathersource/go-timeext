@@ -47,6 +47,31 @@ func TimestampRoundedString(t string) (string, error) {
 	return timestamp.Format(timestampFormat), nil
 }
 
+// TimestampRoundedQuarterHour validates t is formatted RFC 3339 and returns a time object
+// rounded to the nearest UTC quarter hour
+func TimestampRoundedQuarterHour(t string) (time.Time, error) {
+
+	ts, err := Timestamp(t)
+	if err != nil {
+		return time.Time{}, err
+	}
+
+	rounded := ts.Round(15* time.Minute)
+	return rounded, nil
+}
+
+// TimestampRoundedQuarterHourString validates t is formatted RFC 3339 and returns a string formatted RFC 3339
+// rounded to the nearest UTC quarter hour
+func TimestampRoundedQuarterHourString(t string) (string, error) {
+
+	timestamp, err := TimestampRoundedQuarterHour(t)
+	if err != nil {
+		return "", err
+	}
+
+	return timestamp.Format(timestampFormat), nil
+}
+
 // HourCount returns the count of days inclusively bounded by dateStart and dateEnd.
 // dateStart and dateEnd must be formatted "YYYY-MM-DD"
 func HourCount(timestampStart string, timestampEnd string) (int, error) {
