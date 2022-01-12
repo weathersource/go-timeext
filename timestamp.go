@@ -57,6 +57,9 @@ func TimestampRoundedQuarterHour(t string) (time.Time, error) {
 	}
 
 	rounded := ts.Round(15* time.Minute)
+	// currently not using, but the line below rounds to top of quarter hour
+	// rather than simply the nearest quarter hour
+	// rounded := time.Date(ts.Year(), ts.Month(), ts.Day(), ts.Hour(), (ts.Minute()) - (ts.Minute() % 15), 0, 0, time.UTC)
 	return rounded, nil
 }
 
