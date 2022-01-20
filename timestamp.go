@@ -48,7 +48,7 @@ func TimestampRoundedString(t string) (string, error) {
 }
 
 // TimestampRoundedQuarterHour validates t is formatted RFC 3339 and returns a time object
-// rounded to the nearest UTC quarter hour
+// rounded down to the nearest UTC quarter hour
 func TimestampRoundedQuarterHour(t string) (time.Time, error) {
 
 	ts, err := Timestamp(t)
@@ -56,15 +56,12 @@ func TimestampRoundedQuarterHour(t string) (time.Time, error) {
 		return time.Time{}, err
 	}
 
-	rounded := ts.Round(15* time.Minute)
-	// currently not using, but the line below rounds to top of quarter hour
-	// rather than simply the nearest quarter hour
-	// rounded := time.Date(ts.Year(), ts.Month(), ts.Day(), ts.Hour(), (ts.Minute()) - (ts.Minute() % 15), 0, 0, time.UTC)
+	rounded := time.Date(ts.Year(), ts.Month(), ts.Day(), ts.Hour(), (ts.Minute()) - (ts.Minute() % 15), 0, 0, time.UTC)
 	return rounded, nil
 }
 
 // TimestampRoundedQuarterHourString validates t is formatted RFC 3339 and returns a string formatted RFC 3339
-// rounded to the nearest UTC quarter hour
+// rounded down to the nearest UTC quarter hour
 func TimestampRoundedQuarterHourString(t string) (string, error) {
 
 	timestamp, err := TimestampRoundedQuarterHour(t)
