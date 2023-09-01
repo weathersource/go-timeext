@@ -95,10 +95,10 @@ func TestTimestampRoundedQuarterHour(t *testing.T) {
 		out string
 	}{
 		{"2019-01-01T00:33:01Z", "2019-01-01T00:30:00Z"},
-		{"2019-01-01T00:58:13Z", "2019-01-01T01:00:00Z"},
-		{"2019-01-01T00:11:59Z", "2019-01-01T00:15:00Z"},
-		{"2019-01-01T00:29:50Z", "2019-01-01T00:30:00Z"},
-		{"2019-01-01T23:52:30Z", "2019-01-02T00:00:00Z"},
+		{"2019-01-01T00:58:13Z", "2019-01-01T00:45:00Z"},
+		{"2019-01-01T00:11:59Z", "2019-01-01T00:00:00Z"},
+		{"2019-01-01T00:29:50Z", "2019-01-01T00:15:00Z"},
+		{"2019-01-01T23:52:30Z", "2019-01-01T23:45:00Z"},
 		{"2019-01-01T23:52:29Z", "2019-01-01T23:45:00Z"},
 	}
 	for _, test := range tests {
@@ -147,33 +147,63 @@ func TestTimestampRoundedQuarterHourStringError(t *testing.T) {
 }
 
 func TestHourCount(t *testing.T) {
-	tests := []struct {
-		ts1, ts2 string
-		expected int
-	}{
-		{"2019-01-01T00:00:00Z", "2019-01-01T00:00:00.1Z", 1},
-		{"2019-01-01T00:00:00Z", "2019-01-01T02:00:00.1Z", 3},
-		{"2019-01-01T00:00:00Z", "2019-01-01T02:30:00.1Z", 3},
-	}
-	for _, test := range tests {
-		count, err := HourCount(test.ts1, test.ts2)
-		assert.Nil(t, err)
-		assert.Equal(t, test.expected, count)
-	}
+    tests := []struct {
+        ts1, ts2 string
+        expected int
+    }{
+        {"2019-01-01T00:00:00Z", "2019-01-01T00:00:00.1Z", 1},
+        {"2019-01-01T00:00:00Z", "2019-01-01T02:00:00.1Z", 3},
+        {"2019-01-01T00:00:00Z", "2019-01-01T02:30:00.1Z", 3},
+    }
+    for _, test := range tests {
+        count, err := HourCount(test.ts1, test.ts2)
+        assert.Nil(t, err)
+        assert.Equal(t, test.expected, count)
+    }
 }
 
 func TestHourCountError(t *testing.T) {
-	tests := []struct {
-		ts1, ts2 string
-	}{
-		{"2019-01-01T00:00:00A", "2019-01-01T00:00:00.1Z"},
-		{"2019-01-01T00:00:00Z", "2019-01-01T00:00:00.1A"},
-		{"2019-01-01T02:00:00Z", "2019-01-01T00:00:00.1Z"},
-	}
-	for _, test := range tests {
-		_, err := HourCount(test.ts1, test.ts2)
-		assert.NotNil(t, err)
-	}
+    tests := []struct {
+        ts1, ts2 string
+    }{
+        {"2019-01-01T00:00:00A", "2019-01-01T00:00:00.1Z"},
+        {"2019-01-01T00:00:00Z", "2019-01-01T00:00:00.1A"},
+        {"2019-01-01T02:00:00Z", "2019-01-01T00:00:00.1Z"},
+    }
+    for _, test := range tests {
+        _, err := HourCount(test.ts1, test.ts2)
+        assert.NotNil(t, err)
+    }
+}
+
+func TestQuarterHourCount(t *testing.T) {
+    tests := []struct {
+        ts1, ts2 string
+        expected int
+    }{
+        {"2019-01-01T00:00:00Z", "2019-01-01T00:00:00.1Z", 1},
+        {"2019-01-01T00:00:00Z", "2019-01-01T02:00:00.1Z", 9},
+        {"2019-01-01T00:00:00Z", "2019-01-01T02:29:00.1Z", 10},
+    }
+    for _, test := range tests {
+        count, err := QuarterHourCount(test.ts1, test.ts2)
+        assert.Nil(t, err)
+        assert.Equal(t, test.expected, count)
+    }
+}
+
+func TestQuarterHourCountError(t *testing.T) {
+    tests := []struct {
+        ts1, ts2 string
+    }{
+        {"2019-01-01T00:00:00A", "2019-01-01T00:00:00.1Z"},
+        {"2019-01-01T00:00:00Z", "2019-01-01T00:00:00.1A"},
+        {"2019-01-01T02:00:00Z", "2019-01-01T00:00:00.1Z"},
+    }
+    for _, test := range tests {
+        _, err := QuarterHourCount(test.ts1, test.ts2)
+        assert.NotNil(t, err)
+    }
 }
 
 func TestToTimestamp(t *testing.T) {

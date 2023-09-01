@@ -48,7 +48,7 @@ func TimestampRoundedString(t string) (string, error) {
 }
 
 // TimestampRoundedQuarterHour validates t is formatted RFC 3339 and returns a time object
-// rounded to the nearest UTC quarter hour
+// rounded down to the nearest UTC quarter hour
 func TimestampRoundedQuarterHour(t string) (time.Time, error) {
 
 	ts, err := Timestamp(t)
@@ -56,15 +56,12 @@ func TimestampRoundedQuarterHour(t string) (time.Time, error) {
 		return time.Time{}, err
 	}
 
-	rounded := ts.Round(15* time.Minute)
-	// currently not using, but the line below rounds to top of quarter hour
-	// rather than simply the nearest quarter hour
-	// rounded := time.Date(ts.Year(), ts.Month(), ts.Day(), ts.Hour(), (ts.Minute()) - (ts.Minute() % 15), 0, 0, time.UTC)
+	rounded := time.Date(ts.Year(), ts.Month(), ts.Day(), ts.Hour(), (ts.Minute()) - (ts.Minute() % 15), 0, 0, time.UTC)
 	return rounded, nil
 }
 
 // TimestampRoundedQuarterHourString validates t is formatted RFC 3339 and returns a string formatted RFC 3339
-// rounded to the nearest UTC quarter hour
+// rounded down to the nearest UTC quarter hour
 func TimestampRoundedQuarterHourString(t string) (string, error) {
 
 	timestamp, err := TimestampRoundedQuarterHour(t)
@@ -79,22 +76,44 @@ func TimestampRoundedQuarterHourString(t string) (string, error) {
 // dateStart and dateEnd must be formatted "YYYY-MM-DD"
 func HourCount(timestampStart string, timestampEnd string) (int, error) {
 
-	tStart, err := Timestamp(timestampStart)
-	if err != nil {
-		return 0, err
-	}
+    tStart, err := Timestamp(timestampStart)
+    if err != nil {
+        return 0, err
+    }
 
-	tEnd, err := Timestamp(timestampEnd)
-	if err != nil {
-		return 0, err
-	}
+    tEnd, err := Timestamp(timestampEnd)
+    if err != nil {
+        return 0, err
+    }
 
-	if tEnd.Before(tStart) {
-		return 0, errors.NewInvalidArgumentError("Start Timestamp (" +
-			timestampStart + ") must not be after End Timestamp (" + timestampEnd + ")")
-	}
+    if tEnd.Before(tStart) {
+        return 0, errors.NewInvalidArgumentError("Start Timestamp (" +
+            timestampStart + ") must not be after End Timestamp (" + timestampEnd + ")")
+    }
 
-	return int(math.Floor(tEnd.Sub(tStart).Hours() + 1)), nil
+    return int(math.Floor(tEnd.Sub(tStart).Hours() + 1)), nil
+}
+
+// QuarterHourCount returns the count of days inclusively bounded by dateStart and dateEnd.
+// dateStart and dateEnd must be formatted "YYYY-MM-DD"
+func QuarterHourCount(timestampStart string, timestampEnd string) (int, error) {
+
+    tStart, err := TimestampRoundedQuarterHour(timestampStart)
+    if err != nil {
+        return 0, err
+    }
+
+    tEnd, err := TimestampRoundedQuarterHour(timestampEnd)
+    if err != nil {
+        return 0, err
+    }
+
+    if tEnd.Before(tStart) {
+        return 0, errors.NewInvalidArgumentError("Start Timestamp (" +
+            timestampStart + ") must not be after End Timestamp (" + timestampEnd + ")")
+    }
+
+    return int((tEnd.Unix()-tStart.Unix())/(15*60) + 1), nil
 }
 
 // ToTimestamp converts a time object to a RFC 9993 timestamp string
